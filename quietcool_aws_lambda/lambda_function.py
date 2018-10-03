@@ -11,6 +11,7 @@
 """
 
 import boto3
+from enum import Enum
 import json
 import logging
 
@@ -83,15 +84,15 @@ def lambda_handler(event, context):
     responseText = ""
     # Parse incoming request from Alexa
     if event['request']['intent']['name'] == 'SwitchOnIntent':
-        responseText = switch_on_off_intent_handler(event,power=FanPower.ON)
+        responseText = switch_on_off_intent_handler(event,fan_power=FanPower.ON)
     elif event['request']['intent']['name'] == 'SwitchOffIntent':
-        responseText = switch_on_off_intent_handler(event,power=FanPower.OFF)
+        responseText = switch_on_off_intent_handler(event,fan_power=FanPower.OFF)
     elif event['request']['intent']['name'] == 'LowFanSpeedIntent':
-        responseText = fan_speed_intent_handler(event,speed_str=FanSpeed.LOW)
+        responseText = fan_speed_intent_handler(event,fan_speed=FanSpeed.LOW)
     elif event['request']['intent']['name'] == 'MediumFanSpeedIntent':
-        responseText = fan_speed_intent_handler(event,speed_str=FanSpeed.MEDIUM)
+        responseText = fan_speed_intent_handler(event,fan_speed=FanSpeed.MEDIUM)
     elif event['request']['intent']['name'] == 'HighFanSpeedIntent':
-        responseText = fan_speed_intent_handler(event,speed_str=FanSpeed.HIGH)
+        responseText = fan_speed_intent_handler(event,fan_speed=FanSpeed.HIGH)
     else:
         # AMAZON.FallbackIntent
         responseText = fallback_intent_handler()

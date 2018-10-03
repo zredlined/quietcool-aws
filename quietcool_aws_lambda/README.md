@@ -3,6 +3,12 @@
 To use this Lambda function, zip all of the files in this directory
 into a zip file and upload via the Lambda console as a Python 3.6 runtime
 
+```
+pip install -r requirements.txt -t . --upgrade
+rm -f aws_lambda.zip
+zip -r aws_lambda.zip *
+```
+
 ## In the Lambda console, specify 
 * Runtime: Python 3.6
 * Handler: lambda_function.lambda_handler
