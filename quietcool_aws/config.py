@@ -15,11 +15,25 @@ Quietcool AWS configuration
 # {
 #   "state": {
 #       "desired":{
-#           "property":<INT VALUE>
+#           "fan_power":<INT VALUE 0 (off) 1 (on)>,
+#           "fan_speed":<INT VALUE 1 (low) 2 (medium) 3 (high)>
 #       }
 #   }
 # }
 
-controller_url = "http://localhost:3001"
+# Controller type interface
+controller_type = ['Quietcool'][0]
+
+# Path to Node.js quietcool server controller
+# https://github.com/stabbylambda/quietcool-server
+# Handles COAP communication to wifi smart controller
+controller_url = "http://localhost:3001" 
+
+# Local IP address of quietcool fan being controlled
+# https://quietcoolsystems.com/products/wi-fi-smart-control/
+# Note: Use DHCP reservations on your router to ensure this does not change!
 fan_ip = "10.0.11.100"
+
+# Should never take more than 5 seconds to update FAN settings
 api_timeout = 5 # seconds
+

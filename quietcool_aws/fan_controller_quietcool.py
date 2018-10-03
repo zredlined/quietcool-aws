@@ -67,29 +67,29 @@ class QuietcoolController(FanController):
 
     # Set the FAN speed
     def set_fan_speed(self, fan_speed):
-        fan_status = {}
+        fan_response = {}
         try:
             r = requests.post(controller_url+'/fans/%s/%s/setCurrentSpeed' % (self.fan_ip, self.fan_uid), timeout=api_timeout, data={'speed':fan_speed})
-            fan_status = json.loads(r.text)
+            fan_response = json.loads(r.text)
         except requests.exceptions.Timeout as e:
             logging.error("Timeout talking to controller: %s" % (e))
             pass
 
-        return fan_status
+        return fan_response
 
     # Set the FAN power
     def set_fan_power(self, fan_power='on'):
-        fan_power = {}
+        fan_response = {}
         try:
             if fan_power == 'on':
                 r = requests.post(controller_url+'/fans/%s/%s/power' % (self.fan_ip, self.fan_uid), timeout=api_timeout, data={'on':True})
-                fan_power = json.loads(r.text)
+                fan_response = json.loads(r.text)
             elif fan_power == 'off':
                 r = requests.post(controller_url+'/fans/%s/%s/power' % (self.fan_ip, self.fan_uid), timeout=api_timeout, data={'off':True})
-                fan_power = json.loads(r.text)
+                fan_response = json.loads(r.text)
         except requests.exceptions.Timeout as e:
             logging.error("Timeout talking to controller: %s" % (e))
             pass
 
-        return fan_power
+        return fan_response
 

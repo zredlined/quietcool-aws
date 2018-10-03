@@ -19,13 +19,14 @@ import requests
 from fan_controller_quietcool import QuietcoolController
 from config import controller_url, api_timeout
 from config import fan_ip
+from config import controller_type
 
 # Custom Shadow callback
 def customShadowCallback_Update(payload, responseStatus, token):
     # payload is a JSON string ready to be parsed using json.loads(...)
     # in both Py2.x and Py3.x
     if responseStatus == "timeout":
-        print("Update request " + token + " time out!")
+        logging.error("Update request " + token + " time out!")
     if responseStatus == "accepted":
         payloadDict = json.loads(payload)
         print("~~~~~~~~~~~~~~~~~~~~~~~")
@@ -35,17 +36,17 @@ def customShadowCallback_Update(payload, responseStatus, token):
         print("loop_count: " + str(payloadDict["state"]["desired"]["loop_count"]))
         print("~~~~~~~~~~~~~~~~~~~~~~~\n\n")
     if responseStatus == "rejected":
-        print("Update request " + token + " rejected!")
+        logging.error("Update request " + token + " rejected!")
 
 def customShadowCallback_Delete(payload, responseStatus, token):
     if responseStatus == "timeout":
-        print("Delete request " + token + " time out!")
+        logging.error("Delete request " + token + " time out!")
     if responseStatus == "accepted":
-        print("~~~~~~~~~~~~~~~~~~~~~~~")
-        print("Delete request with token: " + token + " accepted!")
-        print("~~~~~~~~~~~~~~~~~~~~~~~\n\n")
+        logging.debug("~~~~~~~~~~~~~~~~~~~~~~~")
+        logging.debug("Delete request with token: " + token + " accepted!")
+        logging.debug("~~~~~~~~~~~~~~~~~~~~~~~\n\n")
     if responseStatus == "rejected":
-        print("Delete request " + token + " rejected!")
+        logging.error("Delete request " + token + " rejected!")
 
 def main():
 
@@ -121,12 +122,13 @@ def main():
     # Update shadow in a loop
     loopCount = 0
 
-    quietcool = QuietcoolController()
+    # Initialize fan controller interface
+    fan_controller = QuietcoolController() if controller_type == "Quietcool" else None
 
     while True:
-        fan_info = quietcool.get_info(fan_ip)
-        print(json.dumps(fan_info,indent=2))
-        shadow = quietcool.get_shadow(loopCount)
+        fan_info = fan_controller.get_info(fan_ip)
+        #print(json.dumps(fan_info,indent=2))
+        shadow = fan_controller.get_shadow(loopCount)
         deviceShadowHandler.shadowUpdate(json.dumps(shadow), customShadowCallback_Update, 5)
         loopCount += 1
         time.sleep(2)

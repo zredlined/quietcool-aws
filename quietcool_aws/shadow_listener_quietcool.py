@@ -18,9 +18,10 @@ import requests
 
 from fan_controller_quietcool import QuietcoolController
 from config import fan_ip
+from config import controller_type
 
 # Initialize Quietcool controller
-quietcool = QuietcoolController()
+quietcool = QuietcoolController() if controller_type == "Quietcool" else None
 
 # Custom Shadow callback
 def customShadowCallback_Delta(payload, responseStatus, token):
@@ -40,7 +41,7 @@ def customShadowCallback_Delta(payload, responseStatus, token):
     #r = requests.get('http://localhost:3001/fans/%s' % (fan_ip))
     #fan_details = json.loads(r.text)
     fan_uid = quietcool.get_uid(fan_ip)
-    print("fan_ip: %s fan_uid: %s" % (fan_ip, fan_uid))
+    logging.debug("fan_ip: %s fan_uid: %s" % (fan_ip, fan_uid))
 
     # Set fan speed 
     if payloadDict["metadata"]["fan_speed"]["timestamp"] == payloadDict["timestamp"]:
@@ -51,13 +52,13 @@ def customShadowCallback_Delta(payload, responseStatus, token):
     # Power on fan 
     if payloadDict["metadata"]["fan_power"]["timestamp"] == payloadDict["timestamp"]:
         if payloadDict["state"]["fan_power"] == 1: 
-            print("Received request to turn on quietcool fan")
+            logging.info("Received request to turn on quietcool fan")
             # Power on fan
             fan_status = quietcool.set_fan_power(fan_power='on')
             logging.debug(fan_status)
 
         elif payloadDict["state"]["fan_power"] == 0:
-            print("Received request to turn off quietcool fan")
+            logging.info("Received request to turn off quietcool fan")
             # Power off fan
             fan_status = quietcool.set_fan_power(fan_power='off')
             logging.debug(fan_status)
