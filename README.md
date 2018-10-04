@@ -62,3 +62,84 @@ python quietcool_aws/shadow_controller_quietcool.py \
     -id quietcool-controller-python-abacabb
 ```
 
+## Install Quietcool-server and Quietcool-AWS as services on Raspberry Pi
+
+### Create a systemctl service for the Quietcool AWS IoT Core Python client
+
+`sudo vi /etc/systemd/system/quietcool-aws.service`
+
+Copy in the following text (and modify AWS endpoint to match your IoT Core endpoint =)
+
+```
+[Unit]
+Description=Quietcool AWS server
+After=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=3
+User=pi
+WorkingDirectory=/home/pi/dev/python3/quietcool-aws/
+ExecStart=/usr/bin/python3 /home/pi/dev/python3/quietcool-aws/quietcool_aws/shadow_listener_quietcool.py \
+    -e XXXXXXXX-ats.iot.us-west-2.amazonaws.com \
+    -r ./certs/root-CA.crt \
+    -c ./certs/QuietcoolThing.cert.pem \
+    -k ./certs/QuietcoolThing.private.key \
+    -n QuietcoolThing \
+    -id quietcool-thing-python-abacabb
+
+[Install]
+WantedBy=multi-user.target
+```
+### Create a systemctl service for the Quietcool COAP server (Node.js Typescript)
+`sudo vi /etc/systemd/system/quietcool-aws.service`
+
+Copy in the following text
+
+```
+[Unit]
+Description=Quietcool COAP server
+After=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=3
+User=pi
+WorkingDirectory=/home/pi/dev/js/quietcool-server/
+ExecStart=/usr/local/bin/ts-node /home/pi/dev/js/quietcool-server/src/index.ts
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Set permissions to initialize each service on startup as systemctl daemons
+```
+# setup quietcool aws
+sudo chmod 644 /etc/systemd/system/quietcool-aws.service
+chmod +x /home/pi/dev/python3/quietcool-aws/quietcool_aws/shadow_listener_quietcool.py
+sudo systemctl daemon-reload
+sudo systemctl enable quietcool-aws.service
+sudo systemctl start quietcool-aws.service
+sudo systemctl status quietcool-aws.service
+
+# setup quietcool coap
+sudo chmod 644 /etc/systemd/system/quietcool-service.service
+chmod +x /home/pi/dev/js/quietcool-server/src/index.ts
+sudo systemctl daemon-reload
+sudo systemctl enable quietcool-service.service
+sudo systemctl start quietcool-service.service
+sudo systemctl status quietcool-service.service
+```
+
+# Setting up your Alexa application using Alexa Skills Kit
+Instructions comming soon!
+
+
+
+
+
+
+
+
