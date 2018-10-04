@@ -19,7 +19,7 @@ fi
 # run pub/sub sample app using certificates downloaded in package
 printf "\nRunning pub/sub iot thing application...\n"
 python quietcool_aws/shadow_listener_quietcool.py \
-    -e a3n4t3ou4ciugo-ats.iot.us-west-2.amazonaws.com \
+    -e XXXXXXXXX-ats.iot.us-west-2.amazonaws.com \
     -r ./certs/root-CA.crt \
     -c ./certs/QuietcoolThing.cert.pem \
     -k ./certs/QuietcoolThing.private.key \
